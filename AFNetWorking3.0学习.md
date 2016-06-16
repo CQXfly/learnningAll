@@ -82,3 +82,32 @@ kvo 回调中处理NSURLSessionTask 以及 downloadTask实例 然后对应方法
 ## 这里就到了 NSURLSessionTaskDelegate 中 
 - (void)URLSession:(__unused NSURLSession*)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error 
 
+## 代码中出现 信号量 dispatch_semaphore_t 
+```
+- (NSArray *)tasksForKeyPath:(NSString *)keyPath {
+    __block NSArray *tasks = nil;
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    [self.session getTasksWithCompletionHandler:^(NSArray *dataTasks, NSArray *uploadTasks, NSArray *downloadTasks) {
+        if ([keyPath isEqualToString:NSStringFromSelector(@selector(dataTasks))]) {
+            tasks = dataTasks;
+        } else if ([keyPath isEqualToString:NSStringFromSelector(@selector(uploadTasks))]) {
+            tasks = uploadTasks;
+        } else if ([keyPath isEqualToString:NSStringFromSelector(@selector(downloadTasks))]) {
+            tasks = downloadTasks;
+        } else if ([keyPath isEqualToString:NSStringFromSelector(@selector(tasks))]) {
+            tasks = [@[dataTasks, uploadTasks, downloadTasks] valueForKeyPath:@"@unionOfArrays.self"];
+        }
+
+        dispatch_semaphore_signal(semaphore);
+    }];
+
+    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+
+    return tasks;
+}
+```
+* dispatch_semaphore_t 也可以作为锁的一种方式 或者说 只有等到有信号才会执行下一步 否则会一直等待 知道block中dispatch_semaphore_signal(semaphore) 执行
+
+## DEPRECATED_ATTRIBUTE 这个宏的使用：可以废弃某个方法
+
+

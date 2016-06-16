@@ -14,4 +14,71 @@
 
 * “当前进度”的思想（每个线程可以有其自己的当前进度）极大的解放了开发者，从而不用在不同的代码层中前后传递NSProgress（例如就像我们经常用NSError对象做的事情）。 这个设计考虑到了一个事实，就是显示进度的代码（就是UI）经常是从做实际执行的代码中被剥离出来的多个层次。另一方面，看起就像代码的风格。当前进度是基于一个线程自身的全局变量，有时候开发者一般会被告知要避免它。 
 
- 
+# 说重点  AFN 源码学习
+## AFNURLSessionManager 类中持有nsprogress uploadProgress 和 downloadProgress 
+在该类中有setupProgressForTask:(NSURLSessionTask*)task 方法中 对task进行了监听 监听 
+```
+[task addObserver:self
+           forKeyPath:NSStringFromSelector(@selector(countOfBytesReceived))
+              options:NSKeyValueObservingOptionNew
+              context:NULL];
+    [task addObserver:self
+           forKeyPath:NSStringFromSelector(@selector(countOfBytesExpectedToReceive))
+              options:NSKeyValueObservingOptionNew
+              context:NULL];
+
+    [task addObserver:self
+           forKeyPath:NSStringFromSelector(@selector(countOfBytesSent))
+              options:NSKeyValueObservingOptionNew
+              context:NULL];
+    [task addObserver:self
+           forKeyPath:NSStringFromSelector(@selector(countOfBytesExpectedToSend))
+              options:NSKeyValueObservingOptionNew
+              context:NULL];
+
+```
+
+同时也对持有的nsprogress进行了监听
+```
+
+    [self.downloadProgress addObserver:self
+                            forKeyPath:NSStringFromSelector(@selector(fractionCompleted))
+                               options:NSKeyValueObservingOptionNew
+                               context:NULL];
+    [self.uploadProgress addObserver:self
+                          forKeyPath:NSStringFromSelector(@selector(fractionCompleted))
+                             options:NSKeyValueObservingOptionNew
+                             context:NULL];
+
+```
+kvo监听回调中做了处理 很明显是针对于nsprogress 
+```
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context {
+    if ([object isKindOfClass:[NSURLSessionTask class]] || [object isKindOfClass:[NSURLSessionDownloadTask class]]) {
+        if ([keyPath isEqualToString:NSStringFromSelector(@selector(countOfBytesReceived))]) {
+            self.downloadProgress.completedUnitCount = [change[NSKeyValueChangeNewKey] longLongValue];
+        } else if ([keyPath isEqualToString:NSStringFromSelector(@selector(countOfBytesExpectedToReceive))]) {
+            self.downloadProgress.totalUnitCount = [change[NSKeyValueChangeNewKey] longLongValue];
+        } else if ([keyPath isEqualToString:NSStringFromSelector(@selector(countOfBytesSent))]) {
+            self.uploadProgress.completedUnitCount = [change[NSKeyValueChangeNewKey] longLongValue];
+        } else if ([keyPath isEqualToString:NSStringFromSelector(@selector(countOfBytesExpectedToSend))]) {
+            self.uploadProgress.totalUnitCount = [change[NSKeyValueChangeNewKey] longLongValue];
+        }
+    }
+    else if ([object isEqual:self.downloadProgress]) {
+        if (self.downloadProgressBlock) {
+            self.downloadProgressBlock(object);
+        }
+    }
+    else if ([object isEqual:self.uploadProgress]) {
+        if (self.uploadProgressBlock) {
+            self.uploadProgressBlock(object);
+        }
+    }
+}
+```
+kvo 回调中处理NSURLSessionTask 以及 downloadTask实例 然后对应方法进行处理
+
+## 这里就到了 NSURLSessionTaskDelegate 中 
+- (void)URLSession:(__unused NSURLSession*)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error 
+

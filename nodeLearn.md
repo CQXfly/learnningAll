@@ -1,4 +1,5 @@
-### 
+###
+``` 
 1. node 与 mongoose的安装
 
 brew install node - version
@@ -17,6 +18,8 @@ user 是你本机的用户名
 开启 mongod 
 随后可以使用终端命令 mongo
 3. mongodb 使用 
+```
+
 ```
 1.mongodb 不区分类型 不区分大小写 但是不能有重复键
   概念 ： db 中集合代表一个文档 对应数据库中的表

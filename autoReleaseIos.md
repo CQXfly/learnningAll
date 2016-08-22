@@ -12,7 +12,7 @@
 ** 以及配置你的邮箱信息
 ```
 from_addr = "hanfengaotian@sina.com"
-password = "cqx09143103"       
+password = ""       
 smtp_server = "smtp.sina.com"
 to_addr = '871708991@qq.com,905799827@qq.com'
 to_addr1 = '657483726.qq.com'

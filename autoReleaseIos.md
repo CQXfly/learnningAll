@@ -1,6 +1,6 @@
 ###learn autp package
 * 学习自动打包 
-* 打包iOS发不到fri 发邮件通知到对方
+* 打包iOS发不到**fir** 发邮件通知到对方
 
 ***
 

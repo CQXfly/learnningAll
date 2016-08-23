@@ -1,4 +1,4 @@
-###learn autp package
+###learn auto package
 * 学习自动打包 
 * 打包iOS发不到**fir** 发邮件通知到对方
 

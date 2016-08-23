@@ -5,11 +5,11 @@
 ***
 
 * 配置需要的路径 token
-** project_path 需要打包的项目所在的路径
-** app_path 打包后生成的。app文件所在的路径
-** targetIPA_path 打包完成后的ipa文件所在路径
-** fir_api_token 上传到fir的apptoken
-** 以及配置你的邮箱信息
+**  project_path 需要打包的项目所在的路径
+**  app_path 打包后生成的。app文件所在的路径
+**  targetIPA_path 打包完成后的ipa文件所在路径
+**  fir_api_token 上传到fir的apptoken
+**  以及配置你的邮箱信息
 ```
 from_addr = "hanfengaotian@sina.com"
 password = ""       
@@ -112,13 +112,13 @@ def main():
 main()
 ```
 
-* 说明:打包主要用到了xcode打包命令 资料很多 
-* fri-cli的工具需要集成 再fir官网是有说明 有一点安装xcode工具的时候可能会失败 多安装几次即可
-* fri的命令行敲是可以的但是python必须要到他的文件夹中使用命令才可以 使用 which fir 即可
+* 说明:打包要用到了xcode打包命令 资料很多 
+* ~~fri-cli~~fir-cli的工具需要集成 再fir官网是有说明 有一点安装xcode工具的时候可能会失败 多安装几次即可
+* ~~fri~~fir的命令行敲是可以的但是python必须要到他的文件夹中使用命令才可以 使用 which fir 即可
 
 
 *** 
-- [ ] 有时候打包的文件测试下载不成功 应该是证书配置的问题 
+- [x ] 有时候打包的文件测试下载不成功 应该是证书配置的问题 
 - [ ] 暂时还不会使用群发邮件.... python 遍历下循环发?
 - [ ] 继续学习python
 
